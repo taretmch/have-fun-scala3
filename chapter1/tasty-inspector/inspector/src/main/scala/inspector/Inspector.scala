@@ -1,3 +1,7 @@
+/** Copyright (c) 2020 The dotty-tasty-inspector-project contributors.
+ *
+ *  All rights reserved.
+ */
 
 package inspector
 

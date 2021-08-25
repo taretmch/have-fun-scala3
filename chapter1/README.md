@@ -1,6 +1,6 @@
 # 第一回: TASTy, 文法 (1)
 
-## 本日やること
+## やること
 
 - Scala 3 コンパイラのインストール
 - TASTy について学ぼう
@@ -37,7 +37,7 @@ Hello 10
 
 ### コンパイルしてみよう
 
-以下の `Hello.scala` をコンパイルしてみよう。
+以下の `Hello.scala` を作成し、コンパイルする。。
 
 ```scala
 @main def hello = println("Hello, world")
@@ -45,6 +45,11 @@ Hello 10
 
 ```sh
 $ cs launch scala3-compiler -- Hello.scala
+```
+
+生成されたファイルを見ると、`.tasty` ファイルというものが生成されているのがわかる。
+
+```sh
 $ ls -l
 Hello$package$.class
 Hello$package.class
@@ -54,19 +59,21 @@ hello.class
 hello.tasty
 ```
 
+`.tasty` ファイルは Scala 3 コンパイラで生成するようになったファイルである。
+
 ## TASTy
 
-TASTy (Typed Abstract Syntax Trees; 型付き抽象構文木) は、プログラムの文法構造、型情報等ソースコードの完全な情報を持つ。Scala 3 コンパイラは、`.scala` ファイルをコンパイルするとき、`.tasty` ファイルと `.class` ファイルを生成する。
+TASTy (Typed Abstract Syntax Trees; 型付き抽象構文木) は、プログラムの文法構造、型情報等ソースコードの完全な情報を持つ。Scala 3 コンパイラは `.scala` ファイルをコンパイルするとき、TASTy の情報を持つ `.tasty` ファイルを生成するようになった。
 
 ### TASTy の中身を見てみよう
 
-[scala3-tasty-inspector](https://github.com/lampepfl/dotty/tree/master/tasty-inspector/src/scala/tasty/inspector) は、`.tasty` ファイルをいい感じに整形してくれるライブラリである。[seed プロジェクト](https://github.com/scala/scala3-tasty-inspector.g8)を元に、先ほどの `Hello.tasty` ファイルの中身を出力してみよう。
+[scala3-tasty-inspector](https://github.com/lampepfl/dotty/tree/master/tasty-inspector/src/scala/tasty/inspector) は、`.tasty` ファイルをいい感じに整形してくれるライブラリである。[seed プロジェクト](https://github.com/scala/scala3-tasty-inspector.g8)を元に、先ほどの `Hello.tasty` ファイルの中身を出力してみる。
 
 ```sh
 $ pwd
 /path/to/have-fun-scala3/lesson1/tasty-inspector
 
-$ sbt inspector/run
+$ sbt "inspector/runMain inspector.hello"
 ```
 
 すると、以下の出力が得られる。
@@ -79,3 +86,55 @@ $ sbt inspector/run
   }
 }
 ```
+
+### TASTy がなぜ必要なのか
+
+Scala 2 コンパイラは `.class` ファイルを生成するが、
+[Type Erasure](https://www.scala-lang.org/files/archive/spec/2.13/03-types.html#type-erasure) のような問題で、`.class` ファイルは Scala ソースコードの完全な情報を持っていない。以下のコード `TypeErasure.scala` は、Type Erasure の例である。
+
+```scala
+val xs: List[Int] = List(1, 2, 3)
+val x = xs(0)
+```
+
+これをコンパイルして生成された `.class` ファイルは、以下のような中身を持つ。
+
+```sh
+$ cs launch scala3-compiler -- TypeErasure.scala
+$ javap TypeErasure\$package\$
+Compiled from "TypeErasure.scala"
+public final class TypeErasure$package$ implements java.io.Serializable {
+  public static final TypeErasure$package$ MODULE$;
+  public static {};
+  public scala.collection.immutable.List<java.lang.Object> xs();
+  public int x();
+}
+```
+
+`List[Int]` が `List<java.lang.Object>` に変わっており、リストの型パラメータ `Int` の情報がなくなっている。一方で、その要素である `x` は `Int` にキャストされて取得されている。
+
+このコードの TASTy を出力すると、以下のようになる。`xs` の型は `List[Int]` のままである。
+
+```sh
+$ cd /path/to/have-fun-scala3/chapter1/tasty-inspector
+$ sbt "inspector/runMain inspector.typeErasure"
+...
+@scala.annotation.internal.SourceFile("lib/src/main/scala/TypeErasure.scala") object TypeErasure$package {
+  val xs: scala.List[scala.Int] = scala.List.apply[scala.Int](1, 2, 3)
+  val x: scala.Int = TypeErasure$package.xs.apply(0)
+}
+```
+
+### TASTy のメリット
+
+- .tasty ファイルを通して、Scala 2.13.6 から Scala 3 のコードを利用できる (TASTy Reader)
+- 分割コンパイルをサポートできるようになるらしい
+- LSP (Language Server Protocol) で利用できるらしい
+- マクロの生成方法に関係しているらしい
+- コード最適化ツール、解析ツールに利用できるらしい
+
+## 文法
+
+### 制御構文の新文法
+
+- 
