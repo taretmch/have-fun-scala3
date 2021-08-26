@@ -8,6 +8,6 @@ package inspector
 import scala.quoted._
 
 @main def hello =
-  val tastyFile = "lib/target/scala-3.0.1/classes/Hello.tasty"
+  val tastyFile = "chapters/target/scala-3.0.1/classes/Hello.tasty"
   val tastyContents = Inspector.showCodeOf(tastyFile)
   println(tastyContents)

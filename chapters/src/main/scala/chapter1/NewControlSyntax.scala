@@ -1,3 +1,5 @@
+package chapter1
+
 import java.io.IOException
 
 object NewControlSyntax:
@@ -12,15 +14,16 @@ object NewControlSyntax:
   def ifFunc2(x: Int) =
     if x < 0 then -x else x
 
-  // Needs scala.runtime.java8
-  //
-  //def whileFunc1(x: Int, f: Int => Int) =
-  //  var tmp = x
-  //  while tmp >= 0 do tmp = f(tmp)
+  def whileFunc1(x: Int, f: Int => Int) =
+    var tmp = x
+    while
+      tmp >= 0
+    do
+      println(tmp)
+      tmp = f(tmp)
 
   def forFunc1(xs: Seq[Int]) =
-    for x <- xs if x > 0
-    yield x * x
+    for x <- xs if x > 0 yield x * x
 
   def forFunc2(xs: Seq[Int], ys: Seq[Int]) =
     for
@@ -30,4 +33,5 @@ object NewControlSyntax:
       println(x + y)
 
   def tryFunc1 =
-    try throw new IOException catch case ex: IOException => println("error")
+    try throw new IOException
+    catch case ex: IOException => println("error")
