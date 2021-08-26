@@ -4,7 +4,7 @@
 
 - Scala 3 コンパイラのインストール
 - TASTy について学ぼう
-- [New in Scala 3](https://docs.scala-lang.org/ja/scala3/new-in-scala3.html) の「新機能 & 特長: 文法」
+- [New in Scala 3](https://docs.scala-lang.org/ja/scala3/new-in-scala3.html) を上から学んでいく
 
 ## Scala 3 インストール
 
@@ -146,4 +146,70 @@ $ sbt "tastyInspector/runMain inspector.typeErasure"
 
 ### 制御構文の新文法
 
-- 
+[New Control Syntax](https://docs.scala-lang.org/scala3/reference/other-new-features/control-syntax.html) より。Scala 3 では、制御構文をよりシンプルに書けるように文法が改善された。
+
+### If
+
+then があれば、条件式にカッコが必要なくなった。
+
+```scala mdoc
+def ifFunc1(x: Int) =
+  if x < 0 then
+    "negative"
+  else if x == 0 then
+    "zero"
+  else
+    "positive"
+
+def ifFunc2(x: Int) =
+  if x < 0 then -x else x
+
+ifFunc1(3)
+ifFunc1(0)
+ifFunc1(-4)
+ifFunc2(-5)
+```
+
+### for
+
+yield か do をつければ、enumerator にカッコが必要なくなった。また、for ループを表す、do が追加された。
+
+```scala mdoc
+def forFunc1(xs: Seq[Int]) =
+  for x <- xs if x > 0 yield x * x
+
+def forFunc2(xs: Seq[Int], ys: Seq[Int]) =
+  for
+    x <- xs
+    y <- ys
+  do
+    println(x + y)
+
+forFunc1(List(1, 2, 3, 4, 5))
+forFunc1(List(1, 2, 3, 4, 5), List(6, 7, 8, 9, 10))
+```
+
+### while
+
+do があれば、条件式にカッコが必要なくなった。
+
+```scala mdoc
+def whileFunc1(x: Int, f: Int => Int) =
+  var tmp = x
+  while
+    tmp >= 0
+  do
+    println(tmp)
+    tmp = f(tmp)
+
+whileFunc1(5, _ - 1)
+```
+
+### try
+
+1つの case であれば、1行で書けるようになった。
+
+```scala mdoc
+try throw new IOException
+catch case ex: IOException => println("error")
+```
