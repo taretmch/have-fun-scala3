@@ -37,7 +37,13 @@ Hello 10
 
 ### コンパイルしてみよう
 
-以下の `Hello.scala` を作成し、コンパイルする。。
+以下の `Hello.scala` を作成し、コンパイルする。
+
+```sh
+$ pwd
+/path/to/have-fun-scala3/src
+$ vim Hello.scala
+```
 
 ```scala
 @main def hello = println("Hello, world")
@@ -71,15 +77,15 @@ TASTy (Typed Abstract Syntax Trees; 型付き抽象構文木) は、プログラ
 
 ```sh
 $ pwd
-/path/to/have-fun-scala3/lesson1/tasty-inspector
+/path/to/have-fun-scala3
 
-$ sbt "inspector/runMain inspector.hello"
+$ sbt "tastyInspector/runMain inspector.hello"
 ```
 
 すると、以下の出力が得られる。
 
 ```scala
-@scala.annotation.internal.SourceFile("lib/src/main/scala/Hello.scala") final class hello() {
+@scala.annotation.internal.SourceFile("chapters/src/main/scala/chapter1/Hello.scala") final class hello() {
   def main(args: scala.Array[java.lang.String]): scala.Unit = try Hello$package.hello catch {
     case error: scala.util.CommandLineParser.ParseError =>
       scala.util.CommandLineParser.showError(error)
@@ -100,6 +106,8 @@ val x = xs(0)
 これをコンパイルして生成された `.class` ファイルは、以下のような中身を持つ。
 
 ```sh
+$ pwd
+/path/to/have-fun-scala3/src
 $ cs launch scala3-compiler -- TypeErasure.scala
 $ javap TypeErasure\$package\$
 Compiled from "TypeErasure.scala"
@@ -116,10 +124,11 @@ public final class TypeErasure$package$ implements java.io.Serializable {
 このコードの TASTy を出力すると、以下のようになる。`xs` の型は `List[Int]` のままである。
 
 ```sh
-$ cd /path/to/have-fun-scala3/chapter1/tasty-inspector
-$ sbt "inspector/runMain inspector.typeErasure"
+$ pwd
+/path/to/have-fun-scala3
+$ sbt "tastyInspector/runMain inspector.typeErasure"
 ...
-@scala.annotation.internal.SourceFile("lib/src/main/scala/TypeErasure.scala") object TypeErasure$package {
+@scala.annotation.internal.SourceFile("chapters/src/main/scala/chapter1/TypeErasure.scala") object TypeErasure$package {
   val xs: scala.List[scala.Int] = scala.List.apply[scala.Int](1, 2, 3)
   val x: scala.Int = TypeErasure$package.xs.apply(0)
 }
