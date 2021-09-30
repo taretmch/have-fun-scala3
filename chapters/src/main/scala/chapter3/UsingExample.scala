@@ -2,31 +2,40 @@ package chapter3
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-object UsingExample extends MonoidInstances:
+import MonoidInstances.given
 
-  def sum[T: Monoid](list: List[T])(using ev: Monoid[T]) =
-    list.foldLeft(ev.unit)(ev.add)
+object UsingExample:
 
-  def sumInt: Int =
-    sum(List(1, 2, 3, 4, 5))
+  def max[T](x: T, y: T)(using ord: Ordering[T]) =
+    if ord.compare(x, y) < 0 then y else x
 
-  def sumString: String =
-    sum(List("Hello", ",", " ", "world", "!"))
+  @main def runMaxExample: Unit =
+    assert(max(1, 2) == 2)
+    assert(max("abcdefg", "hijklmn") == "hijklmn")
 
-  def sumListInt: List[Int] =
-    sum(List(List(1, 2, 3), List(4, 5)))
+  def sum[T](list: List[T])(using ev: Monoid[T]) =
+    list.foldLeft(ev.unit){ case (x, y) => x add y }
 
-  def sumListString: List[String] =
-    sum(List(List("Hello", ",", " "), List("world", "!")))
+  @main def runSumExample: Unit =
+    assert(sum(List(1, 2, 3, 4, 5)) == 15)
+    assert(sum(List("Hello", ",", " ", "world", "!")) == "Hello, world!")
+    assert(sum(List(List(1, 2, 3), List(4, 5))) == List(1, 2, 3, 4, 5))
+    assert(sum(List(List("Hello", ",", " "), List("world", "!"))) == List("Hello", ",", " ", "world", "!"))
+    assert(sum(sum(List(List("Hello", ",", " "), List("world", "!")))) == "Hello, world!")
+    assert(sum(List(Option(1), Option(2), None, Option(3), Option(4), Option(5))) == Some(15))
 
-  def sumSumListString: String =
-    sum(sumListString)
-
-  def sumOptionInt: Option[Int] =
-    sum(List(Option(1), Option(2), None, Option(3), Option(4), Option(5)))
-
-  @main def run: Unit =
+  @main def runWithImport: Unit =
     import scala.concurrent.ExecutionContext.Implicits.global
+    usingExecutionContext
+
+  // Alias given
+  @main def runWithAliasGiven: Unit =
+    given global: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+    usingExecutionContext
+
+  // Alias anounymous given
+  @main def runWithAliasAnounymousGiven: Unit =
+    given ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
     usingExecutionContext
 
   def usingExecutionContext(using ExecutionContext) =

@@ -1,5 +1,6 @@
 package chapter3
 
-trait Monoid[A]:
-  def add(x: A, y: A): A
-  def unit: A
+trait Monoid[T]:
+  extension (x: T) def add(y: T): T
+  extension (x: T) def |+|(y: T): T = x.add(y)
+  def unit: T

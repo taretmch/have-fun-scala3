@@ -1,5 +1,4 @@
 package chapter3
 
-trait MonoidInstances
-  extends MonoidExtensionMethods
-  with    MonoidGiven
+object MonoidInstances
+  extends MonoidGiven

@@ -1,15 +1,15 @@
 package chapter3
 
-trait MonoidGiven:
-  given intMonoid: Monoid[Int] with
+trait MonoidAnounymousGiven:
+  given Monoid[Int] with
     extension (x: Int) def add(y: Int): Int = x + y
     def unit: Int = 0
 
-  given stringMonoid: Monoid[String] with
+  given Monoid[String] with
     extension (x: String) def add(y: String): String = x + y
     def unit: String = ""
 
-  given optionMonoid[A](using m: Monoid[A]): Monoid[Option[A]] with
+  given [A](using m: Monoid[A]): Monoid[Option[A]] with
     extension (x: Option[A]) def add(y: Option[A]): Option[A] =
       (x, y) match
         case (Some(x1), Some(y1)) => Some(x1.add(y1))
@@ -18,6 +18,6 @@ trait MonoidGiven:
         case _                    => None
     def unit: Option[A] = None
 
-  given listMonoid[A]: Monoid[List[A]] with
+  given [A]: Monoid[List[A]] with
     extension (x: List[A]) def add(y: List[A]): List[A] = x ++ y
     def unit: List[A] = List()
