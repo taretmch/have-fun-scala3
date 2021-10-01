@@ -8,6 +8,10 @@ import Question3.*
 
 class Question3Spec extends AnyFlatSpec with Matchers {
 
+  extension [T](x: T)
+    def some: Option[T] =
+      Option(x)
+
   def none[T]: Option[T] = None
 
   "Option[Int] > Option[Int]" should "Ord[Option[Int]] にしたがって、数を比較できる" in {
