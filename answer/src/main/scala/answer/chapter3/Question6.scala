@@ -7,7 +7,6 @@ object Question6:
   class Table:
     val children = new ArrayBuffer[Row]
     def add(r: Row): Unit = children += r
-    def toHtmlString
 
   class Row:
     val children = new ArrayBuffer[Cell]
