@@ -9,8 +9,14 @@ object IntersectionTypeExample:
     def flatMap[A, B](f: A => F[B])(ma: F[A]): F[B] = monad.flatMap(f)(ma)
     def pure[A](a: A): F[A] = monad.pure(a)
 
+  def f[F[_]: S, A](fa: F[A]): F[Int] =
+    def toInt(a: A): Int = 3
+    def toFInt(a: A): F[Int] = summon[Monad[F]].pure(3)
+    fa.map(toInt)
+    fa.flatMap(toFInt)
+
   type T[F[_]] = Functor[F] & Monad[F]
-  def f[F[_]: T, A](fa: F[A]): F[Int] =
+  def g[F[_]: T, A](fa: F[A]): F[Int] =
     def toInt(a: A): Int = 3
     def toFInt(a: A): F[Int] = summon[Monad[F]].pure(3)
     fa.map(toInt)
