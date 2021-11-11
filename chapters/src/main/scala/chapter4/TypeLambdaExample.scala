@@ -7,10 +7,10 @@ object TypeLambdaExample:
   val ex12: [A] => A => Ex1[A, List] = [A] => (a: A) => List(a)
   val ex13: [A] => A => Ex1[A, Option] = [A] => (a: A) => Option(a)
 
-  type FunctionK = [A, F[_], G[_]] =>> F[A] => G[A]
-  def headOptionK[A]: FunctionK[A, List, Option] = (xs: List[A]) => xs.headOption
+  type FunctionK = [F[_], G[_]] =>> [A] =>> F[A] => G[A]
+  def headOptionK[A]: FunctionK[List, Option][A] = _.headOption
 
   @main def runTypeLambdaExample() =
-    assert(ex12[Int](3) == List(3))
-    assert(ex13[String]("hoge") == Some("hoge"))
-    assert(headOptionK[Int](List(1, 2, 3, 4, 5)) == Some(1))
+    assert(ex12(3) == List(3))
+    assert(ex13("hoge") == Some("hoge"))
+    assert(headOptionK(List(1, 2, 3, 4, 5)) == Some(1))
