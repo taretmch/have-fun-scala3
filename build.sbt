@@ -5,7 +5,7 @@ ThisBuild / organizationName := "taretmch"
 val isDotty = Def.setting(
   CrossVersion.partialVersion(scalaVersion.value).exists(_._1 == 3)
 )
-val scala3Version = "3.1.0"
+val scala3Version = "3.1.1"
 val kindProjectorVersion = "0.11.1"
 
 val commonSettings = Seq(
