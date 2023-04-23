@@ -6,3 +6,4 @@ target
 */*.class
 */*.tasty
 docs/mdoc
+metals.sbt
