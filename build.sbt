@@ -2,11 +2,22 @@ ThisBuild / version          := "0.1.0"
 ThisBuild / organization     := "com.criceta"
 ThisBuild / organizationName := "taretmch"
 
+val scala3Version = "3.3.0-RC4"
 val isDotty = Def.setting(
   CrossVersion.partialVersion(scalaVersion.value).exists(_._1 == 3)
 )
-val scala3Version = "3.1.1"
-val kindProjectorVersion = "0.11.1"
+
+val scalacOptionsForScala3 = Seq(
+  "-unchecked",
+  "-Ykind-projector"
+)
+
+val scalacOptionsForScala2 = Seq(
+  "-deprecation",
+  "-Ytasty-reader",
+  "-Xfatal-warnings"
+)
+  
 
 val commonSettings = Seq(
   libraryDependencies ++= Seq(
@@ -18,18 +29,7 @@ val commonSettings = Seq(
     "UTF-8",
     "-feature",
     "-language:implicitConversions",
-  ) ++ (if (isDotty.value) {
-    Seq(
-      "-unchecked",
-      "-Ykind-projector"
-    )
-  } else {
-    Seq(
-      "-deprecation",
-      "-Ytasty-reader",
-      "-Xfatal-warnings"
-    )
-  })
+  ) ++ (if (isDotty.value) scalacOptionsForScala3 else scalacOptionsForScala2)
 )
 
 lazy val chapters = project.in(file("chapters"))
