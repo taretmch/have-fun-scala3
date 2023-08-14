@@ -1,7 +1,6 @@
 import Dependencies._
 import BuildSettings._
 
-ThisBuild / version          := "0.1.0"
 ThisBuild / organization     := "com.github.taretmch"
 ThisBuild / organizationName := "taretmch"
 
