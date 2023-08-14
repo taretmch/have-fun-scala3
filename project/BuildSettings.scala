@@ -32,11 +32,4 @@ object BuildSettings {
     Project(name, file(dir))
       .settings(scalaVersion := Dependencies.Scala3)
       .settings(scalacOptions ++= crossScalacOptions(Dependencies.Scala3))
-      .settings(libraryDependencies ++= Dependencies.scalatest)
-
-  def Scala2Project(name: String, dir: String): Project =
-    Project(name, file(dir))
-      .settings(scalaVersion := Dependencies.Scala213)
-      .settings(scalacOptions ++= crossScalacOptions(Dependencies.Scala213))
-      .settings(libraryDependencies ++= Dependencies.scalatest)
 }
