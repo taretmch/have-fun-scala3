@@ -1,70 +1,39 @@
+import Dependencies._
+import BuildSettings._
+
 ThisBuild / version          := "0.1.0"
-ThisBuild / organization     := "com.criceta"
+ThisBuild / organization     := "com.github.taretmch"
 ThisBuild / organizationName := "taretmch"
 
-val scala3Version = "3.3.0-RC4"
-val isDotty = Def.setting(
-  CrossVersion.partialVersion(scalaVersion.value).exists(_._1 == 3)
-)
+// Project: Chapter programs
+lazy val chapters = Scala3Project("chapters", "chapters")
 
-val scalacOptionsForScala3 = Seq(
-  "-unchecked",
-  "-Ykind-projector"
-)
-
-val scalacOptionsForScala2 = Seq(
-  "-deprecation",
-  "-Ytasty-reader",
-  "-Xfatal-warnings"
-)
-  
-
-val commonSettings = Seq(
-  libraryDependencies ++= Seq(
-    "org.scalactic" %% "scalactic" % "3.2.9",
-    "org.scalatest" %% "scalatest" % "3.2.9" % "test"
-  ),
-  scalacOptions ++= Seq(
-    "-encoding",
-    "UTF-8",
-    "-feature",
-    "-language:implicitConversions",
-  ) ++ (if (isDotty.value) scalacOptionsForScala3 else scalacOptionsForScala2)
-)
-
-lazy val chapters = project.in(file("chapters"))
-  .settings(name := "chapters")
-  .settings(scalaVersion := scala3Version)
-  .settings(commonSettings: _*)
-
-lazy val forScala2 = project.in(file("cross-version-modules/scala-2"))
-  .settings(name := "for-scala-2")
-  .settings(scalaVersion := "2.13.7")
-  .settings(commonSettings: _*)
+// Project: CrossVersion modules for Scala 2
+lazy val forScala2 = Scala2Project("for-scala-2", "cross-version-modules/scala-2")
   .dependsOn(chapters)
 
-lazy val tastyInspector = project.in(file("tasty-inspector"))
-  .settings(name := "tasty-inspector")
-  .settings(scalaVersion := scala3Version)
-  .settings(commonSettings: _*)
-  .settings(libraryDependencies ++= Seq(
-    "org.scala-lang" %% "scala3-tasty-inspector" % scala3Version,
-  ))
+// Project: Tasy inspector samples
+lazy val tastyInspectorSample = Scala3Project("tasty-inspector-sample", "tasty-inspector")
+  .settings(libraryDependencies ++= Seq(tastyInspector))
   .dependsOn(chapters)
 
-lazy val docs = project.in(file("docs"))
-  .settings(name := "have-fun-scala3-docs")
-  .settings(scalaVersion := scala3Version)
+// Project: Document for Scala 3
+lazy val docs = Scala3Project("have-fun-scala3-docs", "docs")
   .enablePlugins(MdocPlugin)
   .settings(mdocIn  := file("docs/src/main"))
   .settings(mdocOut := file("docs/mdoc"))
 
-lazy val exercise = project.in(file("exercise"))
-  .settings(name := "exercise")
-  .settings(scalaVersion := scala3Version)
-  .settings(commonSettings: _*)
+// Project: Exercise for chapters
+lazy val exercise = Scala3Project("exercise", "exercise")
 
-lazy val answer = project.in(file("answer"))
-  .settings(name := "answer")
-  .settings(scalaVersion := scala3Version)
-  .settings(commonSettings: _*)
+// Project: Answers for exercise
+lazy val answer = Scala3Project("answer", "answer")
+
+lazy val root = (project in file("."))
+  .aggregate(chapters, forScala2, tastyInspectorSample, docs, exercise, answer)
+  .settings(
+    crossScalaVersions := Nil,
+    publish / skip := true
+  )
+
+Global / onChangedBuildSource := ReloadOnSourceChanges
