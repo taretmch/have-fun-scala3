@@ -1,70 +1,15 @@
-ThisBuild / version          := "0.1.0"
-ThisBuild / organization     := "com.criceta"
+import Dependencies._
+import BuildSettings._
+
+ThisBuild / organization     := "com.github.taretmch"
 ThisBuild / organizationName := "taretmch"
 
-val scala3Version = "3.3.0-RC4"
-val isDotty = Def.setting(
-  CrossVersion.partialVersion(scalaVersion.value).exists(_._1 == 3)
-)
+lazy val basic        = Scala3Project("basic", "basic")
+lazy val intermediate = Scala3Project("intermediate", "intermediate")
+lazy val advanced     = Scala3Project("advanced", "advanced")
 
-val scalacOptionsForScala3 = Seq(
-  "-unchecked",
-  "-Ykind-projector"
-)
+lazy val root = Scala3Project("root", ".")
+  .aggregate(basic, intermediate, advanced)
+  .dependsOn(basic, intermediate, advanced)
 
-val scalacOptionsForScala2 = Seq(
-  "-deprecation",
-  "-Ytasty-reader",
-  "-Xfatal-warnings"
-)
-  
-
-val commonSettings = Seq(
-  libraryDependencies ++= Seq(
-    "org.scalactic" %% "scalactic" % "3.2.9",
-    "org.scalatest" %% "scalatest" % "3.2.9" % "test"
-  ),
-  scalacOptions ++= Seq(
-    "-encoding",
-    "UTF-8",
-    "-feature",
-    "-language:implicitConversions",
-  ) ++ (if (isDotty.value) scalacOptionsForScala3 else scalacOptionsForScala2)
-)
-
-lazy val chapters = project.in(file("chapters"))
-  .settings(name := "chapters")
-  .settings(scalaVersion := scala3Version)
-  .settings(commonSettings: _*)
-
-lazy val forScala2 = project.in(file("cross-version-modules/scala-2"))
-  .settings(name := "for-scala-2")
-  .settings(scalaVersion := "2.13.7")
-  .settings(commonSettings: _*)
-  .dependsOn(chapters)
-
-lazy val tastyInspector = project.in(file("tasty-inspector"))
-  .settings(name := "tasty-inspector")
-  .settings(scalaVersion := scala3Version)
-  .settings(commonSettings: _*)
-  .settings(libraryDependencies ++= Seq(
-    "org.scala-lang" %% "scala3-tasty-inspector" % scala3Version,
-  ))
-  .dependsOn(chapters)
-
-lazy val docs = project.in(file("docs"))
-  .settings(name := "have-fun-scala3-docs")
-  .settings(scalaVersion := scala3Version)
-  .enablePlugins(MdocPlugin)
-  .settings(mdocIn  := file("docs/src/main"))
-  .settings(mdocOut := file("docs/mdoc"))
-
-lazy val exercise = project.in(file("exercise"))
-  .settings(name := "exercise")
-  .settings(scalaVersion := scala3Version)
-  .settings(commonSettings: _*)
-
-lazy val answer = project.in(file("answer"))
-  .settings(name := "answer")
-  .settings(scalaVersion := scala3Version)
-  .settings(commonSettings: _*)
+Global / onChangedBuildSource := ReloadOnSourceChanges
