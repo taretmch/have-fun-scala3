@@ -13,6 +13,7 @@ object BuildSettings {
     "-encoding",
     "utf8",
     "-language:implicitConversions",
+    "-Werror",
   )
 
   def crossScalacOptions(version: String) = {
